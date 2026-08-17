@@ -1,0 +1,10 @@
+From: Harbor Freight Forms
+Invoice no. HF-7781
+Date: 03/02/2026
+
+Corrugated boxes  20 x $2.40 = $48.00
+Packing tape  6 x $3.10 = $18.60
+
+Subtotal: $66.60
+Tax: $5.00
+Total: $99.99

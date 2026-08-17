@@ -1,0 +1,9 @@
+Invoice #: R-2201
+Date: 2026-01-19
+
+Coffee  2 x $4.50 = $9.00
+Pastry  1 x $3.25 = $3.25
+
+Subtotal: $12.25
+Tax: $1.00
+Amount due: $13.25

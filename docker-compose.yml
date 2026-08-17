@@ -1,0 +1,44 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      WORKER_BACKEND: celery
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: sqlite:////app/data/extraction.db
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434/v1}
+    volumes:
+      - extract-data:/app/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - redis
+
+  worker:
+    build: .
+    command: celery -A workers.celery_app.celery_app worker --loglevel=info
+    env_file:
+      - .env
+    environment:
+      WORKER_BACKEND: celery
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: sqlite:////app/data/extraction.db
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434/v1}
+      PYTHONPATH: /app/src
+    volumes:
+      - extract-data:/app/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - redis
+
+volumes:
+  extract-data:

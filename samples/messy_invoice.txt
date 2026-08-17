@@ -1,0 +1,10 @@
+BILLED BY:   acme   warehouse   CO
+inv #   ACME-9A
+date 1/7/26
+
+• Stretch film 3 x $22 = $66.00
+• Dock seals   1 x $140.00 = $140.00
+
+sub-total $206.00
+TAX $16.48
+TOTAL $222.48

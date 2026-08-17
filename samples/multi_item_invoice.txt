@@ -1,0 +1,12 @@
+Vendor: Lakeside Print
+Invoice Number: LP-55019
+Date: 2026-04-01
+
+Letterhead  500 x $0.12 = $60.00
+Envelopes   500 x $0.08 = $40.00
+Business cards  200 x $0.15 = $30.00
+Rush fee    1 x $25.00 = $25.00
+
+Subtotal: $155.00
+Tax: $12.40
+Total: $167.40

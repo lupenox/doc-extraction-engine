@@ -1,0 +1,10 @@
+Vendor: Northline Supplies
+Invoice Number: INV-1042
+Date: 2026-03-12
+
+Pallet wrap  10 x $12.00 = $120.00
+Label stock  4 x $18.50 = $74.00
+
+Subtotal: $194.00
+Tax: $15.52
+Total: $209.52
