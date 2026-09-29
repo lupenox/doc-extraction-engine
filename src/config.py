@@ -13,6 +13,12 @@ class Settings(BaseSettings):
     redis_url: str = "redis://127.0.0.1:6379/0"
     database_url: str = "sqlite:///data/extraction.db"
     upload_dir: Path = Path("data/uploads")
+    max_upload_bytes: int = 10 * 1024 * 1024
+    allowed_extensions: list[str] = [
+        ".txt", ".md", ".csv", ".html", ".json",
+        ".pdf",
+        ".png", ".jpg", ".jpeg", ".webp", ".tif", ".tiff",
+    ]
 
     ollama_base_url: str = "http://127.0.0.1:11434/v1"
     vision_model: str = "qwen2.5vl:7b"

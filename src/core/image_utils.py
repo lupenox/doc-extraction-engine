@@ -12,8 +12,26 @@ def to_base64(data: bytes) -> str:
     return base64.b64encode(data).decode("ascii")
 
 
+IMAGE_MIME_TYPES = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".webp": "image/webp",
+    ".tif": "image/tiff",
+    ".tiff": "image/tiff",
+}
+
+
 def looks_like_image(path: Path) -> bool:
-    return path.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp", ".tif", ".tiff"}
+    return path.suffix.lower() in IMAGE_MIME_TYPES
+
+
+def image_mime_type(path: Path) -> str:
+    return IMAGE_MIME_TYPES.get(path.suffix.lower(), "application/octet-stream")
+
+
+def to_data_url(data: bytes, mime_type: str) -> str:
+    return f"data:{mime_type};base64,{to_base64(data)}"
 
 
 def extract_text(path: Path) -> str:

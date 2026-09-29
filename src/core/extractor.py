@@ -10,7 +10,7 @@ from pathlib import Path
 import httpx
 
 from config import Settings, get_settings
-from core.image_utils import extract_text, looks_like_image, to_base64
+from core.image_utils import extract_text, image_mime_type, looks_like_image, to_data_url
 from schemas.invoice import ExtractedInvoice, LineItem, money
 
 logger = logging.getLogger(__name__)
@@ -98,16 +98,28 @@ def heuristic_extract(text: str) -> ExtractedInvoice:
     )
 
 
-def _llm_extract(text: str, image_b64: str | None, settings: Settings) -> ExtractedInvoice:
+def _llm_extract(text: str, image_data_url: str | None, settings: Settings) -> ExtractedInvoice:
+    """Ask the configured OpenAI-compatible model for an invoice.
+
+    When the upload is an image, it is sent as an ``image_url`` content part
+    (base64 data URL) so a vision model such as ``qwen2.5vl`` can read it.
+    """
     schema_hint = ExtractedInvoice.model_json_schema()
-    user = (
+    instructions = (
         "Extract an invoice as JSON matching this schema. "
         "Use nulls when unknown. Do not invent line items.\n"
-        f"{json.dumps(schema_hint)}\n\nDocument text:\n{text[:8000]}"
+        f"{json.dumps(schema_hint)}\n\n"
     )
+    if image_data_url:
+        user_content: str | list[dict] = [
+            {"type": "text", "text": instructions + "The invoice is attached as an image."},
+            {"type": "image_url", "image_url": {"url": image_data_url}},
+        ]
+    else:
+        user_content = instructions + f"Document text:\n{text[:8000]}"
     messages = [
         {"role": "system", "content": "You extract invoices. Return JSON only."},
-        {"role": "user", "content": user},
+        {"role": "user", "content": user_content},
     ]
     payload = {
         "model": settings.vision_model,
@@ -131,9 +143,11 @@ def extract_invoice(path: Path, settings: Settings | None = None) -> ExtractedIn
     settings = settings or get_settings()
     text = extract_text(path)
     fallback = heuristic_extract(text)
-    image_b64 = to_base64(path.read_bytes()) if looks_like_image(path) else None
+    image_data_url = (
+        to_data_url(path.read_bytes(), image_mime_type(path)) if looks_like_image(path) else None
+    )
     try:
-        llm = _llm_extract(text, image_b64, settings)
+        llm = _llm_extract(text, image_data_url, settings)
         # Prefer LLM fields when present, but keep heuristic math if the model omitted totals.
         merged = fallback.model_dump()
         for key, value in llm.model_dump().items():
