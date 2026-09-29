@@ -67,7 +67,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Optional vision model:
+Optional vision model (image uploads — `.png`, `.jpg`, `.webp`, `.tif` — are sent to it as a base64 `image_url` part):
 
 ```bash
 ollama pull qwen2.5vl:7b
@@ -80,7 +80,7 @@ Without Ollama the heuristic parser still extracts the sample files. That is int
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `GET` | `/health` | Liveness |
-| `POST` | `/extract` | Upload a document, returns `202` + `task_id` |
+| `POST` | `/extract` | Upload a document, returns `202` + `task_id` (`400` empty/invalid name, `413` over `MAX_UPLOAD_BYTES`, `415` unsupported type) |
 | `GET` | `/status/{task_id}` | Job status + structured result |
 | `GET` | `/review-queue` | Open validation exceptions |
 | `POST` | `/review-queue/{id}/resolve` | Mark an exception handled |
